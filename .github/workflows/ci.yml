@@ -17,14 +17,9 @@ jobs:
       matrix:
         ruby-version: ['2.7']
         channel: ['stable']
-        imagemagick: ['7.1.1', '6.9.13']
 
         include:
           - ruby-version: ruby-head
-            imagemagick: '7.1.1'
-            channel: 'experimental'
-          - ruby-version: ruby-head
-            imagemagick: '6.9.13'
             channel: 'experimental'
 
     env:
@@ -33,14 +28,11 @@ jobs:
     continue-on-error: ${{ matrix.channel != 'stable' }}
 
     steps:
-    - name: Install GraphicsMagick
+    - name: Install GraphicsMagick and ImageMagick
       run: |
         sudo apt-get update
-        sudo apt-get -yq --no-install-suggests --no-install-recommends install graphicsmagick
+        sudo apt-get -yq --no-install-suggests --no-install-recommends install graphicsmagick imagemagick
     - uses: actions/checkout@v4
-    - name: Install ImageMagick
-      run: |
-        bash install/imagemagick.sh
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
