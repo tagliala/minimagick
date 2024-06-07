@@ -23,6 +23,11 @@ jobs:
           - "3.2"
           - "3.3"
           - "jruby-9.4"
+        imagemagick: ["default"]
+
+        include:
+          - ruby: "3.3"
+            imagemagick: "7.1.1"
 
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +49,17 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run:
           sudo apt-get install -qq -o Acquire::Retries=3 imagemagick graphicsmagick
+
+      - name: Update ImageMagick
+        if: ${{ matrix.imagemagick != 'default' }}
+        run: |
+          sudo apt-get install -qq webp
+          im_download_path=$(curl -sf https://download.imagemagick.org/archive/releases/ | grep -o "ImageMagick-${{ matrix.imagemagick }}-.[0-9]*.tar.xz" | tail -1)
+          curl -f "https://download.imagemagick.org/archive/releases/$im_download_path" > ImageMagick.tar.xz
+          tar xf ImageMagick.tar.xz
+          cd ImageMagick-*
+          ./configure --prefix=/usr
+          sudo make install
 
       - name: ImageMagick version
         run: convert -version
